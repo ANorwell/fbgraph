@@ -118,7 +118,8 @@ if ($me) {
 
     <h3>Controls</h3>
 
-    <div id="processfriends" type="processfriends" type="button" onclick="processFriends()">Process Friends</button>
+    <div id="processfriends" class="processfriends">
+         <button type="button" style="font-size:0.6em" onclick="processFriends()">Process Friends</button>
     </div>
                                         
 
