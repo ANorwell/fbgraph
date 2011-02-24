@@ -1,5 +1,7 @@
+console.log = function(){};
 
-//document.write('ACCESS:' + ACCESS_TOKEN + '\n');
+//the (global) friend data that will be constructed to send to server.
+var gFrData;
 
 window.fbAsyncInit = function() {
     FB.init({
@@ -20,23 +22,19 @@ window.fbAsyncInit = function() {
     var e = document.createElement('script');
     e.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';
     e.async = true;
-    document.getElementById('fb-root').appendChild(e);
+    $('#fb-root').append(e);
+
+
 }());
 
+$(function() {
+        //set up buttons
+        console.log("Setting buttons");
+        $("button", "#processfriends").button();
+    });
+        
 
-function getAuthToken() {
-    //if it's already in the url, get it.
-    //otherwise, send to fb oauth to get the token.
-
-    var params = getFragment();
-    var auth_token = params['auth_token'];
-
-    if (auth_token) {
-        return auth_token;
-    } else {
-        $.get('https://graph.facebook.com/oauth/access_token');
-    }
-}
+//Get mutual friends for friendlist
 
 function getMutualFriends(me_id, you_id) {
     var query_string = OLD_API + '/' + 'friends.getMutualFriends' + '?' +
@@ -48,6 +46,21 @@ function getMutualFriends(me_id, you_id) {
     document.write( "Getting mut friends (" + query_string + " for" + me_id + ', ' + you_id + '\n');
 };
 
+function processFriends() {
+    console.log("Called processfriends");
+    for (var div in $('#friends div')) {
+        console.log(div);
+        //append friendlist selectors
+
+        //call mutual-friend lookup
+    }
+}
+
+
+
+
+
+//MISC
 
 //helper to get param pairs from query string
 function getParams() {

@@ -30,14 +30,12 @@ if ($session) {
 
   try {
       $friends = $facebook->api('/me/friends');
-      $first_id = $friends['data'][0]['id'];
-      $api_path = '/' . $first_id . '/friends';
-      $first_fr = $facebook->api($api_path);
+      $friendlists = $facebook->api('/me/friendlists');
       
   } catch (FacebookApiException $e) {
+      echo $e;
       error_log($e);
-  }
-      
+  }   
 }
 
 // login or logout url will be needed depending on current user state.
@@ -48,6 +46,7 @@ if ($me) {
 }
 
 ?>
+
 <!doctype html>
 <html xmlns:fb="http://www.facebook.com/2008/fbml">
   <head>
@@ -55,7 +54,7 @@ if ($me) {
      <script type="text/javascript">
        var OLD_API = 'https://api.facebook.com/method/';
        var APP_ID = '<?php echo $facebook->getAppId(); ?>';
-       var URL = 'http://anorwell.com/fbgraph.example.php';
+       var URL = 'http://anorwell.com/fbgraph/example.php';
        var AUTH = 'https://www.facebook.com/dialog/oauth?response_type=token&client_id=' +
            APP_ID + '&redirect_uri='+ URL;
        var SESSION_JSON = '<?php echo json_encode($session); ?>';
@@ -64,8 +63,12 @@ if ($me) {
     </script>
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+    <link type="text/css" href="jqueryui/css/redmond/jquery-ui-1.8.10.custom.css" rel="stylesheet" />
+    <script src="js/jquery-ui-1.8.10.custom.min.js"></script>
+
     <script type="text/javascript" src="local.js"></script>
-    <style>
+
+    <!-- <style>
       body {
         font-family: 'Lucida Grande', Verdana, Arial, sans-serif;
       }
@@ -76,27 +79,20 @@ if ($me) {
       h1 a:hover {
         text-decoration: underline;
       }
-    </style>
-  </head>
-  <body>
-    <!--
-      We use the JS SDK to provide a richer user experience. For more info,
-      look here: http://github.com/facebook/connect-js
-    -->
-    <div id="fb-root"> </div>
+    </style> -->
+    </head>
+    <body>
+    <div id="fb-root"></div>
 
+          
 
-
-    <h1><a href="example.php">php-sdk</a></h1>
+    <h1><a href="example.php">Friend Categories</a></h1>
 
     <?php if ($me): ?>
     <a href="<?php echo $logoutUrl; ?>">
       <img src="http://static.ak.fbcdn.net/rsrc.php/z2Y31/hash/cxrz4k7j.gif">
     </a>
     <?php else: ?>
-    <div>
-      Using JavaScript &amp; XFBML: <fb:login-button></fb:login-button>
-    </div>
     <div>
       Without using JavaScript &amp; XFBML:
       <a href="<?php echo $loginUrl; ?>">
@@ -116,18 +112,34 @@ if ($me) {
     <h3>Your User Object</h3>
 
     <pre><?php print_r($me); ?></pre>
-    <pre><?php
-    $my_id = $me['id'];
-    foreach ($friends['data'] as $friend) {
-        print_r($friend);
-        $friend_id = $friend['id'];
-        ?>
-            <script type="text/javascript">
-                 getMutualFriends(<?php echo $my_id ?>,<?php echo $friend_id ?>);
-            </script>
-    <?php }            
 
-?></pre>
+    <h3>Your Friend Groups</h3>
+    <pre><?php print_r($friendlists); ?></pre>
+
+    <h3>Controls</h3>
+
+    <div id="processfriends" type="processfriends" type="button" onclick="processFriends()">Process Friends</button>
+    </div>
+                                        
+
+
+    <h3>Your Friends</h3>
+    <div id="friends">
+
+    <?php
+    foreach ($friends['data'] as $friend) {
+        $friend_id = $friend['id'];
+        $friend_name = $friend['name'];
+        ?>
+            <div id="<?php echo $friend_id; ?>">
+                 <img src="https://graph.facebook.com/<?php echo $friend_id; ?>/picture">
+                 <?php echo $friend_name ?>
+           </div>
+        <?php } //end foreach      
+
+?>
+
+    </div>
     
     <?php else: ?>
     <strong><em>You are not Connected.</em></strong>
